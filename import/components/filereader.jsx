@@ -4,28 +4,28 @@ import Papa from 'papaparse';
 bookinfo = [];
 
 class FileReader extends React.Component {
-    constructor() {
-      super();
+    constructor(props) {
+      super(props);
       this.state = {
         csvfile: undefined,
-        print : undefined
+        printContent: undefined
       };
       this.updateData = this.updateData.bind(this);
+      this.printTable = this.printTable.bind(this);
     }
-  
+
     handleChange = event => {
       this.setState({
         csvfile: event.target.files[0]
       });
     };
 
-    change(event) {
+    printTable() {
       this.setState({
-        print : 'yes',
+        printContent: bookinfo
       })
-      console.log(event.target.print);
     }
-  
+
     importCSV = () => {
       const { csvfile } = this.state;
       Papa.parse(csvfile, {
@@ -33,45 +33,47 @@ class FileReader extends React.Component {
         header: true
       });
     };
-  
+
     updateData(info) {
       var data = info.data;
-      
+
       bookinfo = data;
       console.log(bookinfo);
     }
 
 
     printData() {
-      if(this.state.print == 'yes'){
-      return (
-      this.bookinfo.map((contentinfo) => 
-      //<Content>
-      //</Content>
-      <div>
-            <h3>Author: {contentinfo.Author}</h3>      
-            <h3>Title: {contentinfo.Title}</h3>   
-            <h3>ISBN:  {contentinfo.ISBN}</h3>   
-            <h3>Format:  {contentinfo.Format}</h3>   
-            <h3>Pages:  {contentinfo.Pages}</h3>   
-            <h3>Publisher: {contentinfo.Publisher}</h3>
-            <h3>Genre:  {contentinfo.Genre}</h3>   
-      </div>
-      )
-      );}
+      if(this.state.printContent){
+        return (
+          this.state.printContent.map((contentinfo) =>
+            <div>
+              <h3>Author: {contentinfo.Author}</h3>
+              <h3>Title: {contentinfo.Title}</h3>
+              <h3>ISBN:  {contentinfo.ISBN}</h3>
+              <h3>Format:  {contentinfo.Format}</h3>
+              <h3>Pages:  {contentinfo.Pages}</h3>
+              <h3>Publisher: {contentinfo.Publisher}</h3>
+              <h3>Genre:  {contentinfo.Genre}</h3>
+            </div>
+          )
+        );
+      }
       else {
-        <div>
-            <h3>Author: </h3>      
-            <h3>Title: </h3>   
-            <h3>ISBN:  </h3>   
-            <h3>Format:  </h3>   
-            <h3>Pages:  </h3>   
+        // console.log(this.state.printContent);
+        return(
+          <div>
+            <h3>Author: </h3>
+            <h3>Title: </h3>
+            <h3>ISBN:  </h3>
+            <h3>Format:  </h3>
+            <h3>Pages:  </h3>
             <h3>Publisher: </h3>
-            <h3>Genre:  </h3>   
-      </div>
+            <h3>Genre:  </h3>
+          </div>
+        )
       }
     }
-  
+
     render() {
       //console.log(this.state.csvfile);
       return (
@@ -89,12 +91,13 @@ class FileReader extends React.Component {
           />
           <p />
           <button onClick={this.importCSV}> Upload now!</button>
-          <button onClick={this.printData()}> Show Data</button>
-          
-            
+          <button onClick={this.printTable}>Show table</button>
+          <div>
+            {this.printData()}
+          </div>
         </div>
       );
     }
   }
-  
+
   export default FileReader;
